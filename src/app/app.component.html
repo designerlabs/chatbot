@@ -19,36 +19,77 @@
 </ul>
 -->
 
+
   <div class="row">
-    <input type="text" [(ngModel)]="question" (keyup)="getQuestion()" class="form-control col-md-12 input-lg">
+    <h3> {{ initialQues }}</h3>
   </div>
 
-  <button ng-speech-recognition-start ng-speech-recognition-end="speech.displayTranscript()" class="btn btn-md">
+  <div class="row" *ngIf="active">
+    <input type="text" [(ngModel)]="question" (keyup)="getQuestion()" (keyup.enter)="doPOST()" class="form-control col-md-12 input-lg">
+  </div>
 
-      Press & Talk
+  <div *ngIf="active" style="margin-top:20px;">
+    <button class="btn btn-md btn-danger" (click)="resetSession()">Retry ?</button>
+  </div>
+  <div *ngIf="!active">
 
-  </button>
+    <h5>Order summary</h5>
+    <div *ngFor="let item of pastRes">
+        <div>
+            <label for="">Pizza Type</label> 
+            {{item.result.parameters.type}}
+        </div>
 
-  <h1>{{question}}</h1>
-<div class="row">
+      <div>
+          <label for="">Fillings</label> 
+          {{item.result.parameters.fillings}}
+      </div>
+      
+      <div>
+          <label for="">Spread with</label> 
+          {{item.result.parameters.spread}}
+      </div>
+
+      <div>
+          <label for="">Total No. of pizzas</label>
+          {{item.result.parameters.number}}
+      </div>
+      <div>
+          <label for="">Delivery by</label>
+          {{item.result.parameters.time}}
+      </div>
+      
+      <div>
+          <label for="">Delivery to</label>
+          {{item.result.parameters.address}}
+      </div>
+    </div>
+
+    <button class="btn btn-md btn-success">Confirm!</button>
+    
+    <button class="btn btn-md btn-warning" (click)="tryagain()">Try again</button>
+  </div>
+
+
+<div class="row" style="margin-top:30px;">
   <div class="m-t-1">
-    <button class="btn btn-primary" (click)="doGET()">GET</button>
-    <button class="btn btn-primary" (click)="doPOST()">POST</button>
-    <button class="btn btn-primary" (click)="doPUT()">PUT</button>
-    <button class="btn btn-primary" (click)="doDELETE()">DELETE</button>
+    <!-- <button class="btn btn-primary" (click)="doGET()">GET</button> -->
+    <!-- <button class="btn btn-primary" (click)="doPOST()">{{ buttonText }}</button> -->
+    <!-- <button class="btn btn-primary" (click)="doPUT()">PUT</button>
+    <button class="btn btn-primary" (click)="doDELETE()">DELETE</button> -->
   </div>
 </div>
 
-<div class="row">
+<!-- <div class="row">
   <div class="m-t-1">
     <button class="btn btn-secondary" (click)="doGETAsPromise()">As Promise</button>
     <button class="btn btn-secondary" (click)="doGETAsPromiseError()">Error as Promise</button>
     <button class="btn btn-secondary" (click)="doGETAsObservableError()">Error as Observable</button>
   </div>
-</div>
-
+</div> -->
+<!-- 
 <div class="row">
   <div class="m-t-1">
     <button class="btn btn-danger" (click)="doGETWithHeaders()">With Headers</button>
   </div>
-</div>
+</div> -->

@@ -12,14 +12,20 @@ import { SpeechRecognitionDirective } from 'ng-speech-recognition';
 })
 export class AppComponent implements OnInit{
   
-
+  active = true;
   title = 'app';
+  result:object;
+  sessionId:String;
+  pastRes = [];
   body:object;
+  buttonText = 'Let\'s Go';
+  initialQues = 'How can I help you ?';
   question: string;
   apiRoot: string = "https://api.api.ai/v1/query"; 
   //urlData: string = "query=hi&lang=en&sessionId=bae3e533-5a09-450e-932e-058fb2c6cf63&timezone=Asia/Kuala_Lumpur";
 
   getQuestion(){
+    this.buttonText = 'Submit';
     //console.log(this.question);
     return this.question;
   }
@@ -34,24 +40,33 @@ export class AppComponent implements OnInit{
   }
 
   doPOST() {
+
     this.body={
       v:'20170712',
       query:this.getQuestion(),
       lang:'en',
-      sessionId:'bae3e533-5a09-450e-932e-058fb2c6cf63',
+      sessionId: this.sessionId,
       timezone:'Asia/Kuala_Lumpur'
     };
-  
-    console.log("POST");
-    console.log(this.getQuestion());
-    console.log(this.getQuestion());
     let headers = new Headers();
-    headers.append('Authorization', 'Bearer 4029c7df8a2e422d99e5e39c4890eaa7');
+    headers.append('Authorization', 'Bearer 20fb58c3b4644c699e4ffe6012c76656');
     headers.append('Content-Type','application/json; charset=utf-8');
     let opts = new RequestOptions();
     opts.headers = headers;
     let url = `${this.apiRoot}`;
-    this.http.post(url, this.body, opts).subscribe(res => console.log(res.json()));
+    this.http.post(url, this.body, opts).subscribe(res => { 
+      this.initialQues = res.json().result.speech;
+      
+      this.question = '';
+      if(res.json().result.speech == 'Great! Your order is on its way!'){
+        this.result = res.json();
+        this.active = false;
+        console.log(this.result);
+      }else{
+        this.pastRes = [];
+        this.pastRes.push(res.json());
+      }
+    });
   }
 
   doPUT() {
@@ -60,6 +75,17 @@ export class AppComponent implements OnInit{
 
   doDELETE() {
     console.log("DELETE");
+  }
+
+  tryagain(){
+    this.active = true;
+    this.initialQues = 'How can I help you ?';
+  }
+
+
+  resetSession(){
+    this.sessionId = Math.random().toString(36).substring(2);
+    this.tryagain();
   }
 
   doGETAsPromise() {
@@ -79,7 +105,7 @@ export class AppComponent implements OnInit{
   }
 
   ngOnInit():void{
-     
+    this.resetSession()
   }
 
  
